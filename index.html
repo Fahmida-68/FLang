@@ -1,0 +1,247 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FLang - A Custom Toy Programming Language</title>
+    <link rel="stylesheet" href="https://pyscript.net/releases/2024.1.1/core.css" />
+    <script type="module" src="https://pyscript.net/releases/2024.1.1/core.js"></script>
+    
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #0d1117;
+            color: #f0f6fc;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            min-height: 100vh;
+        }
+        /* Hero Section matching Custom FLang Theme */
+        .hero {
+            text-align: center;
+            margin-top: 60px;
+            margin-bottom: 40px;
+        }
+        .hero h1 {
+            font-size: 75px;
+            font-weight: 900;
+            color: #38bdf8;
+            margin: 0;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+        }
+        .hero p {
+            font-size: 20px;
+            color: #8b949e;
+            margin-top: 15px;
+            margin-bottom: 0;
+        }
+        /* Playground Styling */
+        .playground-container {
+            width: 90%;
+            max-width: 900px;
+            background: #161b22;
+            border: 1px solid #30363d;
+            border-radius: 6px;
+            overflow: hidden;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+            margin-bottom: 5px;
+        }
+        .playground-header {
+            background-color: #21262d;
+            padding: 12px 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 1px solid #30363d;
+        }
+        .playground-title {
+            font-size: 24px;
+            font-weight: bold;
+            color: #f0f6fc;
+        }
+        .btn-group button {
+            padding: 8px 24px;
+            font-size: 16px;
+            font-weight: bold;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: 0.2s;
+            margin-left: 10px;
+            border: none;
+        }
+        #run-btn {
+            background-color: #38bdf8;
+            color: #0d1117;
+        }
+        #run-btn:hover { background-color: #0ea5e9; }
+        #clear-btn {
+            background-color: #f0f6fc;
+            color: #0d1117;
+        }
+        #clear-btn:hover { background-color: #dbe2e9; }
+        
+        textarea {
+            width: 100%;
+            height: 280px;
+            background-color: #0d1117;
+            color: #4ade80;
+            font-family: 'Fira Code', 'Courier New', Courier, monospace;
+            font-size: 17px;
+            line-height: 1.5;
+            padding: 20px;
+            border: none;
+            box-sizing: border-box;
+            resize: none;
+            outline: none;
+        }
+        /* Console Window Box */
+        .console-container {
+            width: 90%;
+            max-width: 900px;
+            background: #0d1117;
+            border: 1px solid #30363d;
+            border-radius: 6px;
+            margin-top: 20px;
+            margin-bottom: 50px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+        }
+        .console-container-header {
+            background-color: #161b22;
+            padding: 8px 15px;
+            font-size: 12px;
+            color: #8b949e;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            border-bottom: 1px solid #30363d;
+        }
+        .output-box {
+            padding: 15px 20px;
+            min-height: 60px;
+            font-family: 'Fira Code', monospace;
+            font-size: 15px;
+            color: #58a6ff;
+            white-space: pre-wrap;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="hero">
+        <h1>FLANG</h1>
+        <p>A procedural toy programming language written in Python</p>
+    </div>
+
+    <div class="playground-container">
+        <div class="playground-header">
+            <div class="playground-title">Playground</div>
+            <div class="btn-group">
+                <button id="run-btn" py-click="run_compiler">Run</button>
+                <button id="clear-btn" py-click="clear_editor">Clear</button>
+            </div>
+        </div>
+        <textarea id="code-input">start flang
+    bol 10 + 20 * 2 - 5
+end flang</textarea>
+    </div>
+
+    <div class="console-container">
+        <div class="console-header-title" style="background-color: #161b22; padding: 8px 15px; font-size: 12px; color: #8b949e; text-transform: uppercase; border-bottom: 1px solid #30363d;">Console Output</div>
+        <div id="output" class="output-box">Output ready...</div>
+    </div>
+
+    <script type="py">
+        from pyscript import document
+
+        # Core Lexer Token Constants 
+        TOKEN_INT, TOKEN_PLUS, TOKEN_MINUS, TOKEN_MUL, TOKEN_DIV, TOKEN_PRINT, TOKEN_EOF = 'INT', 'PLUS', 'MINUS', 'MUL', 'DIV', 'PRINT', 'EOF'
+
+        class Token:
+            def __init__(self, type_, value=None):
+                self.type = type_
+                self.value = value
+            def __repr__(self):
+                return f'{self.type}:{self.value}' if self.value is not None else f'{self.type}'
+
+        def custom_lexer(text):
+            tokens = []
+            pos = 0
+            while pos < len(text):
+                char = text[pos]
+                if char in ' \t\n\r':
+                    pos += 1
+                    continue
+                # Professional keyword checking wrapper mappings 
+                if text[pos:pos+3] == "bol" and (pos+3 >= len(text) or text[pos+3] in ' \t\n\r'):
+                    tokens.append(Token(TOKEN_PRINT))
+                    pos += 3
+                    continue
+                if char == '+': tokens.append(Token(TOKEN_PLUS)); pos += 1
+                elif char == '-': tokens.append(Token(TOKEN_MINUS)); pos += 1
+                elif char == '*': tokens.append(Token(TOKEN_MUL)); pos += 1
+                elif char == '/': tokens.append(Token(TOKEN_DIV)); pos += 1
+                elif char.isdigit():
+                    num = ''
+                    while pos < len(text) and text[pos].isdigit():
+                        num += text[pos]
+                        pos += 1
+                    tokens.append(Token(TOKEN_INT, int(num)))
+                else:
+                    pos += 1
+            tokens.append(Token(TOKEN_EOF))
+            return tokens
+
+        def evaluate_code(text):
+            clean_text = text.strip()
+            
+            # Syntax validation checks against FLang Wrappers 
+            if not clean_text.startswith("start flang"):
+                return "[Parser Error]: Program must start with 'start flang' boundary entry keyword."
+            if not clean_text.endswith("end flang"):
+                return "[Parser Error]: Program execution requires 'end flang' closure statement."
+            
+            # Splitting payload string dynamically inside wrappers 
+            core_program = clean_text[11:-9].strip()
+            
+            tokens = custom_lexer(core_program)
+            if not tokens or tokens[0].type != TOKEN_PRINT:
+                return "[Parser Error]: Program parsing initialization expects declaration commands."
+            
+            idx = 1
+            if idx < len(tokens) and tokens[idx].type == TOKEN_INT:
+                result = tokens[idx].value
+                idx += 1
+                while idx < len(tokens):
+                    op = tokens[idx]
+                    if op.type in [TOKEN_PLUS, TOKEN_MINUS, TOKEN_MUL, TOKEN_DIV]:
+                        idx += 1
+                        if idx < len(tokens) and tokens[idx].type == TOKEN_INT:
+                            next_val = tokens[idx].value
+                            if op.type == TOKEN_PLUS: result += next_val
+                            elif op.type == TOKEN_MINUS: result -= next_val
+                            elif op.type == TOKEN_MUL: result *= next_val
+                            elif op.type == TOKEN_DIV:
+                                if next_val == 0: return "[Runtime Error]: Division by zero tracking error!"
+                                result //= next_val
+                        idx += 1
+                    else:
+                        break
+                return f"Success! Output Value: {result}"
+            return "[Compiler Error]: Malformed logical execution trace block layout."
+
+        # Control UI Event Listeners 
+        def run_compiler(event):
+            input_text = document.getElementById("code-input").value
+            console_output = evaluate_code(input_text)
+            document.getElementById("output").innerText = console_output
+
+        def clear_editor(event):
+            document.getElementById("code-input").value = ""
+            document.getElementById("output").innerText = ""
+    </script>
+
+</body>
+</html>
