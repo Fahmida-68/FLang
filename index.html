@@ -16,6 +16,22 @@
         .code-font { font-family: 'Fira Code', monospace; }
         .bhailang-box { background-color: #161b22; border: 1px solid #30363d; border-radius: 6px; }
         .inline-code { background-color: #21262d; padding: 2px 6px; border-radius: 4px; font-family: 'Fira Code', monospace; color: #ff7b72; font-size: 0.9em; }
+        
+        /* Strict CSS rule to completely block and hide PyScript's built-in error/alert windows */
+        py-script-css-theme-error, 
+        .pyscript-alert, 
+        py-aside,
+        div[style*="background-color"], 
+        div[class*="error"] { 
+            display: none !important; 
+            visibility: hidden !important; 
+            opacity: 0 !important; 
+            height: 0 !important; 
+            width: 0 !important;
+            overflow: hidden !important;
+            position: absolute !important;
+            pointer-events: none !important;
+        }
     </style>
 </head>
 <body class="p-4 md:p-8">
@@ -120,19 +136,25 @@ shesh flang</pre>
     <script type="py" config='{"files": ["tokens.py", "lexer.py", "parser.py", "interpreter.py", "main.py"]}'>
 from pyscript import document
 from main import run_code
+import sys
 
 def execute_playground(event):
-    input_text = document.querySelector("#code-input").value
-    output_element = document.querySelector("#output-box")
-    
-    result = run_code(input_text)
-    
-    if "[Compiler Error]" in result:
-        output_element.style.color = "#ff6b6b"
-    else:
-        output_element.style.color = "#4ade80"
+    try:
+        input_text = document.querySelector("#code-input").value
+        output_element = document.querySelector("#output-box")
         
-    output_element.innerText = result
+        # Run compiler logic pipeline securely
+        result = run_code(input_text)
+        
+        if "[Compiler Error]" in str(result):
+            output_element.style.color = "#ff6b6b"
+        else:
+            output_element.style.color = "#4ade80"
+            
+        output_element.innerText = str(result)
+    except Exception as e:
+        document.querySelector("#output-box").style.color = "#ff6b6b"
+        document.querySelector("#output-box").innerText = f"[System Error]: {str(e)}"
 
 def clear_playground(event):
     document.querySelector("#output-box").innerText = ""
