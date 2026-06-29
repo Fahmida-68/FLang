@@ -1,1 +1,18 @@
-bol 10 + 20 * 2 - 5
+shuru flang
+    bol "Hello World"
+    
+    rakho a = 3
+    rakho b = 0
+
+    jotokkhon (b < 5) {
+        bol b
+
+        jodi (b == a) {
+            bol "b is equal to a"
+        } natho (b == 0) {
+            bol "b is equal to zero"
+        }
+
+        b = b + 1
+    }
+shesh flang
