@@ -3,108 +3,38 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>FLang - A Custom Toy Programming Language</title>
-    
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Permanent+Marker&family=Inter:wght@400;600;900&family=Fira+Code:wght@500&display=swap" rel="stylesheet">
-
-    <link rel="stylesheet" href="https://pyscript.net/releases/2024.1.1/core.css" />
+    <title>FLang - Interactive Playground</title>
+    <!-- PyScript Stylesheets -->
+    <link rel="stylesheet" href="https://pyscript.net/releases/2024.1.1/core.css">
     <script type="module" src="https://pyscript.net/releases/2024.1.1/core.js"></script>
+    
+    <!-- Google Fonts & Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;500&family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
 
     <style>
-        html { scroll-behavior: smooth; }
-        body {
-            font-family: 'Inter', sans-serif;
-            background-color: #0f111a;
-            color: #f0f6fc;
-            margin: 0;
-            padding: 0;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            min-height: 100vh;
-        }
-        .hero { text-align: center; margin-top: 100px; margin-bottom: 80px; }
-        .hero h1 {
-            font-family: 'Permanent Marker', cursive;
-            font-size: 110px;
-            color: #ff4a22;
-            margin: 0;
-            letter-spacing: 4px;
-            text-transform: uppercase;
-            text-shadow: 0px 4px 20px rgba(255, 74, 34, 0.2);
-        }
-        .hero p.tagline { font-size: 22px; color: #bdc5d4; margin-top: 25px; }
-        .credits { font-size: 15px; color: #656d8a; margin-top: 20px; }
-        .credits a { color: #ff4a22; text-decoration: none; font-weight: 600; }
-        
-        .main-nav-btns { margin-top: 35px; display: flex; justify-content: center; gap: 20px; }
-        .btn-primary {
-            background-color: #ff4a22; color: white; padding: 14px 32px;
-            font-size: 16px; font-weight: bold; border: none; border-radius: 6px;
-            cursor: pointer; transition: 0.2s; box-shadow: 0 4px 15px rgba(255, 74, 34, 0.3);
-        }
-        .btn-primary:hover { background-color: #e03d19; }
-        .btn-secondary {
-            background-color: #21262d; color: #c9d1d9; padding: 14px 32px;
-            font-size: 16px; font-weight: bold; border: 1px solid #30363d; border-radius: 6px;
-            cursor: pointer; transition: 0.2s;
-        }
-        .btn-secondary:hover { background-color: #30363d; }
-
-        .playground-container {
-            width: 90%; max-width: 1000px; background: #171923;
-            border: 1px solid #232738; border-radius: 12px; overflow: hidden;
-            box-shadow: 0 20px 40px rgba(0,0,0,0.6); margin-top: 40px;
-        }
-        .playground-header {
-            background-color: #1f2233; padding: 16px 25px;
-            display: flex; justify-content: space-between; align-items: center;
-            border-bottom: 1px solid #232738;
-        }
-        .playground-title { font-size: 16px; font-weight: 600; color: #a0aec0; text-transform: uppercase; }
-        .action-btns button {
-            padding: 10px 24px; font-size: 15px; font-weight: bold;
-            border-radius: 6px; cursor: pointer; transition: 0.2s; border: none; margin-left: 10px;
-        }
-        #run-btn { background-color: #ff4a22; color: white; }
-        #clear-btn { background-color: #2d3142; color: #a0aec0; }
-        
-        textarea {
-            width: 100%; height: 380px; background-color: #0f111a; color: #f0f6fc;
-            font-family: 'Fira Code', monospace; font-size: 17px; line-height: 1.6;
-            padding: 25px; border: none; box-sizing: border-box; resize: none; outline: none;
-        }
-        .console-container {
-            width: 90%; max-width: 1000px; background: #0f111a;
-            border: 1px solid #232738; border-radius: 12px; margin-top: 30px; margin-bottom: 100px;
-        }
-        .console-header { background-color: #171923; padding: 12px 25px; font-size: 13px; color: #718096; font-weight: bold; border-bottom: 1px solid #232738; }
-        .output-box { padding: 20px 25px; min-height: 80px; font-family: 'Fira Code', monospace; font-size: 16px; color: #ff4a22; white-space: pre-wrap; background-color: #0b0c13; }
+        body { font-family: 'Poppins', sans-serif; background-color: #0d1117; color: #c9d1d9; }
+        .code-font { font-family: 'Fira Code', monospace; }
+        .bhailang-box { background-color: #161b22; border: 1px solid #30363d; border-radius: 6px; }
+        .inline-code { background-color: #21262d; padding: 2px 6px; border-radius: 4px; font-family: 'Fira Code', monospace; color: #ff7b72; font-size: 0.9em; }
     </style>
 </head>
-<body>
+<body class="p-4 md:p-8">
 
-    <div class="hero">
-        <h1>FLANG</h1>
-        <p class="tagline">A toy programming language written in Python</p>
-        <div class="main-nav-btns">
-            <a href="#editor-section"><button class="btn-primary">Playground</button></a>
-            <a href="https://github.com/Fahmida-68/FLang" target="_blank"><button class="btn-secondary">View Source</button></a>
-        </div>
-        <p class="credits">Made by <a href="mailto:antanafahmida2013@gmail.com">antanafahmida2013@gmail.com</a></p>
-    </div>
+    <!-- Main Playground Section -->
+    <div class="max-w-5xl mx-auto">
+        <h1 class="text-4xl md:text-5xl font-bold text-center text-sky-400 mb-2 tracking-tight">FLANG</h1>
+        <p class="text-center text-gray-400 mb-8 text-sm md:text-base">A procedural toy programming language written in Python</p>
 
-    <div id="editor-section" class="playground-container">
-        <div class="playground-header">
-            <div class="playground-title">playground</div>
-            <div class="action-btns">
-                <button id="run-btn" py-click="execute_from_ui">Run</button>
-                <button id="clear-btn" onclick="clearEditor()">Clear</button>
+        <div class="bg-[#161b22] border border-[#30363d] rounded-lg shadow-2xl overflow-hidden mb-12">
+            <div class="bg-[#21262d] px-4 py-3 flex justify-between items-center border-b border-[#30363d]">
+                <span class="font-semibold text-gray-200">Playground</span>
+                <div class="flex gap-2">
+                    <button id="run-btn" class="bg-sky-600 hover:bg-sky-500 text-white font-semibold px-5 py-1.5 rounded transition text-sm">Run</button>
+                    <button id="clear-btn" class="bg-gray-700 hover:bg-gray-600 text-gray-200 font-semibold px-5 py-1.5 rounded transition text-sm">Clear</button>
+                </div>
             </div>
-        </div>
-        <textarea id="code-input">shuru flang
+            <textarea id="code-input" class="w-full h-64 bg-[#0d1117] text-green-400 p-4 font-mono focus:outline-none resize-none code-font text-sm md:text-base" spellcheck="false">shuru flang
     bol "Hello World"
     
     rakho a = 3
@@ -122,37 +52,95 @@
         b = b + 1
     }
 shesh flang</textarea>
+        </div>
+
+        <div class="bg-[#161b22] border border-[#30363d] rounded-lg p-4 mb-16">
+            <h3 class="text-xs font-semibold text-gray-400 uppercase tracking-wider mb-2">Output Log Window</h3>
+            <pre id="output-box" class="code-font text-sm md:text-base bg-[#0d1117] p-4 rounded text-gray-300 min-h-[100px] whitespace-pre-wrap"></pre>
+        </div>
+
+        <hr class="border-gray-800 mb-12">
+
+        <!-- Custom Documentation Section (Bhailang Style) -->
+        <h2 class="text-3xl font-bold text-white mb-2">Documentation</h2>
+        <p class="text-gray-400 mb-8">FLang is a localized procedural toy programming language ecosystem built natively on top of Python compiler design patterns.</p>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+            <!-- Row 1: General & Variables -->
+            <div>
+                <h3 class="text-xl font-bold text-white mb-2 border-b border-gray-800 pb-2">General</h3>
+                <p class="text-sm text-gray-400 mb-4"><span class="inline-code">shuru flang</span> is the entrypoint for the program and all programs must end with <span class="inline-code">shesh flang</span>. Anything outside will be ignored.</p>
+                <pre class="bhailang-box p-4 text-xs text-gray-400 code-font">This will be ignored
+
+shuru flang
+    // Write code here
+shesh flang
+
+This too</pre>
+            </div>
+
+            <div>
+                <h3 class="text-xl font-bold text-white mb-2 border-b border-gray-800 pb-2">Variables</h3>
+                <p class="text-sm text-gray-400 mb-4">Variables can be declared dynamically anywhere inside the entry scope blocks using the keyword <span class="inline-code">rakho</span>.</p>
+                <pre class="bhailang-box p-4 text-xs text-sky-300 code-font">shuru flang
+    rakho a = 10
+    rakho b = "two"
+    rakho c = 15
+    a = a + 1
+    b = 21
+shesh flang</pre>
+            </div>
+
+            <!-- Row 2: Types & Built-ins -->
+            <div>
+                <h3 class="text-xl font-bold text-white mb-2 border-b border-gray-800 pb-2">Types</h3>
+                <p class="text-sm text-gray-400 mb-4">Numbers and strings are fully integrated. Conditional expressions resolve standard comparisons directly inside control definitions.</p>
+                <pre class="bhailang-box p-4 text-xs text-green-300 code-font">shuru flang
+    rakho a = 10
+    rakho b = 10 + (15 * 20)
+    rakho c = "FLang Engine"
+shesh flang</pre>
+            </div>
+
+            <div>
+                <h3 class="text-xl font-bold text-white mb-2 border-b border-gray-800 pb-2">Built-ins</h3>
+                <p class="text-sm text-gray-400 mb-4">Use the default command standard keyword <span class="inline-code">bol</span> to print output values or statements directly onto the terminal logs.</p>
+                <pre class="bhailang-box p-4 text-xs text-yellow-200 code-font">shuru flang
+    bol "Hello World"
+    rakho a = 10
+    bol a
+shesh flang</pre>
+            </div>
+        </div>
     </div>
 
-    <div class="console-container">
-        <div class="console-header">Output Log Window</div>
-        <div id="output" class="output-box">Output log sequence idle...</div>
-    </div>
-
-    <script>
-        function clearEditor() {
-            document.getElementById("code-input").value = "";
-            document.getElementById("output").innerText = "";
-        }
-    </script>
-
-    <py-config>
-        [[fetch]]
-        files = ["tokens.py", "lexer.py", "parser.py", "interpreter.py", "main.py"]
-    </py-config>
-
-    <py-script>
-        from main import run_code
+    <!-- PyScript Execution Core Context Bridge Configuration -->
+    <script type="py" config='{"files": ["tokens.py", "lexer.py", "parser.py", "interpreter.py", "main.py"]}'>
+        import sys
         from pyscript import document
+        from main import run_code
 
-        def execute_from_ui(event):
-            code_input = document.querySelector("#code-input").value
-            output_box = document.querySelector("#output")
+        def execute_playground(event):
+            input_text = document.querySelector("#code-input").value
+            output_element = document.querySelector("#output-box")
             
-            # Fire standard compiler execution flow pipeline
-            result = run_code(code_input)
-            output_box.innerText = result
-    </py-script>
+            # Run compiler sequence
+            result = run_code(input_text)
+            
+            # Format outputs color styling dynamically
+            if "[Compiler Error]" in result:
+                output_element.style.color = "#ff6b6b"
+            else:
+                output_element.style.color = "#4ade80"
+                
+            output_element.innerText = result
 
+        def clear_playground(event):
+            document.querySelector("#output-box").innerText = ""
+
+        # Bind operational buttons
+        document.querySelector("#run-btn").onclick = execute_playground
+        document.querySelector("#clear-btn").onclick = clear_playground
+    </script>
 </body>
 </html>
