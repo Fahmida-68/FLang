@@ -1,16 +1,30 @@
 # main.py
-from interpreter import run
-from lexer import lexer
-from parser import parse
+import sys
+from lexer import Lexer
+from parser import Parser
+from interpreter import Interpreter
 
-print("====== TOKENS ======\n")
-tokens = lexer("program.fl")
-for token in tokens:
-    print(token)
+def run_code(source_code):
+    try:
+        lexer = Lexer(source_code)
+        tokens = lexer.make_tokens()
+        
+        parser = Parser(tokens)
+        ast = parser.parse()
+        
+        interpreter = Interpreter()
+        interpreter.execute(ast)
+        
+        return "\n".join(interpreter.console_output)
+    except Exception as e:
+        return f"[Compiler Error]: {str(e)}"
 
-print("\n====== PARSER ======\n")
-syntax_ok = parse("program.fl")
-
-if syntax_ok:
-    print("\n====== OUTPUT ======\n")
-    run("program.fl")
+if __name__ == '__main__':
+    # Standard runtime sequence reading standalone .fl files locally via console terminal
+    if len(sys.argv) > 1:
+        filename = sys.argv[1]
+        with open(filename, 'r') as file:
+            code = file.read()
+        print(run_code(code))
+    else:
+        print("FLang Engine Active. Run with filename parameter blueprint (e.g., python main.py program.fl)")
