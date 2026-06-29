@@ -23,11 +23,9 @@ class Interpreter:
                     self.execute(stmt)
         elif isinstance(node, IfNode):
             if self.evaluate(node.condition):
-                for stmt in node.body: 
-                    self.execute(stmt)
+                for stmt in node.body: self.execute(stmt)
             elif node.elif_condition and self.evaluate(node.elif_condition):
-                for stmt in node.elif_body: 
-                    self.execute(stmt)
+                for stmt in node.elif_body: self.execute(stmt)
 
     def evaluate(self, node):
         if isinstance(node, LiteralNode):
