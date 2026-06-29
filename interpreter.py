@@ -1,34 +1,47 @@
 # interpreter.py
-from lexer import lexer
-from tokens import TOKEN_PRINT, TOKEN_INT, TOKEN_PLUS, TOKEN_MINUS, TOKEN_MUL, TOKEN_DIV
+from tokens import *
+from parser import *
 
-def run(filename):
-    tokens = lexer(filename)
-    
-    if not tokens or tokens[0].type != TOKEN_PRINT:
-        return
+class Interpreter:
+    def __init__(self):
+        self.global_memory = {}
+        self.console_output = []
 
-    # Calculator Engine Logic
-    idx = 1
-    if idx < len(tokens) and tokens[idx].type == TOKEN_INT:
-        result = tokens[idx].value
-        idx += 1
-        
-        while idx < len(tokens):
-            op = tokens[idx]
-            if op.type in [TOKEN_PLUS, TOKEN_MINUS, TOKEN_MUL, TOKEN_DIV]:
-                idx += 1
-                if idx < len(tokens) and tokens[idx].type == TOKEN_INT:
-                    next_val = tokens[idx].value
-                    if op.type == TOKEN_PLUS: result += next_val
-                    elif op.type == TOKEN_MINUS: result -= next_val
-                    elif op.type == TOKEN_MUL: result *= next_val
-                    elif op.type == TOKEN_DIV: 
-                        if next_val == 0:
-                            print("[Runtime Error]: Division by zero!")
-                            return
-                        result //= next_val # Integer division
-                idx += 1
-            else:
-                break
-        print(f"Output: {result}")
+    def execute(self, node):
+        if isinstance(node, ProgramNode):
+            for stmt in node.statements:
+                self.execute(stmt)
+        elif isinstance(node, PrintNode):
+            val = self.evaluate(node.expr)
+            self.console_output.append(str(val))
+        elif isinstance(node, VarAssignNode):
+            val = self.evaluate(node.value_node)
+            self.global_memory[node.var_name] = val
+        elif isinstance(node, WhileNode):
+            while self.evaluate(node.condition):
+                for stmt in node.body:
+                    self.execute(stmt)
+        elif isinstance(node, IfNode):
+            if self.evaluate(node.condition):
+                for stmt in node.body: self.execute(stmt)
+            elif node.elif_condition and self.evaluate(node.elif_condition):
+                for stmt in node.elif_body: self.execute(stmt)
+
+    def evaluate(self, node):
+        if isinstance(node, LiteralNode):
+            return node.token.value
+        elif isinstance(node, VarAccessNode):
+            if node.var_name in self.global_memory:
+                return self.global_memory[node.var_name]
+            raise Exception(f"Runtime Error: Variable '{node.var_name}' data reference missing.")
+        elif isinstance(node, BinOpNode):
+            left_val = self.evaluate(node.left)
+            right_val = self.evaluate(node.right)
+            op = node.op_tok.type
+            if op == TOKEN_PLUS: return left_val + right_val
+            if op == TOKEN_MINUS: return left_val - right_val
+            if op == TOKEN_MUL: return left_val * right_val
+            if op == TOKEN_DIV: return left_val // right_val
+            if op == TOKEN_EE: return left_val == right_val
+            if op == TOKEN_LT: return left_val < right_val
+        return None
