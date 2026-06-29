@@ -13,8 +13,11 @@ def run_code(source_code):
         ast = parser.parse()
         
         interpreter = Interpreter()
-        interpreter.execute(ast)
+        interpreter.visit(ast)
         
-        return "\n".join(interpreter.console_output)
+        if hasattr(interpreter, 'console_output') and interpreter.console_output:
+            return "\n".join(str(x) for x in interpreter.console_output)
+        return "Program executed successfully (No output)."
+        
     except Exception as e:
         return f"[Compiler Error]: {str(e)}"
