@@ -23,34 +23,25 @@ class Lexer:
             elif self.current_char == '"' or self.current_char == "'":
                 tokens.append(self.make_string())
             elif self.current_char == '+':
-                tokens.append(Token(TOKEN_PLUS))
-                self.advance()
+                tokens.append(Token(TOKEN_PLUS)), self.advance()
             elif self.current_char == '-':
-                tokens.append(Token(TOKEN_MINUS))
-                self.advance()
+                tokens.append(Token(TOKEN_MINUS)), self.advance()
             elif self.current_char == '*':
-                tokens.append(Token(TOKEN_MUL))
-                self.advance()
+                tokens.append(Token(TOKEN_MUL)), self.advance()
             elif self.current_char == '/':
-                tokens.append(Token(TOKEN_DIV))
-                self.advance()
+                tokens.append(Token(TOKEN_DIV)), self.advance()
             elif self.current_char == '=':
                 tokens.append(self.make_equals())
             elif self.current_char == '<':
-                tokens.append(Token(TOKEN_LT))
-                self.advance()
+                tokens.append(Token(TOKEN_LT)), self.advance()
             elif self.current_char == '(':
-                tokens.append(Token(TOKEN_LPAREN))
-                self.advance()
+                tokens.append(Token(TOKEN_LPAREN)), self.advance()
             elif self.current_char == ')':
-                tokens.append(Token(TOKEN_RPAREN))
-                self.advance()
+                tokens.append(Token(TOKEN_RPAREN)), self.advance()
             elif self.current_char == '{':
-                tokens.append(Token(TOKEN_LBRACE))
-                self.advance()
+                tokens.append(Token(TOKEN_LBRACE)), self.advance()
             elif self.current_char == '}':
-                tokens.append(Token(TOKEN_RBRACE))
-                self.advance()
+                tokens.append(Token(TOKEN_RBRACE)), self.advance()
             else:
                 raise Exception(f"Illegal Character: '{self.current_char}'")
         

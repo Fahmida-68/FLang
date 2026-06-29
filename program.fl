@@ -1,6 +1,6 @@
 shuru flang
     bol "Hello World"
-
+    
     rakho a = 3
     rakho b = 0
 
@@ -14,5 +14,5 @@ shuru flang
         }
 
         b = b + 1
-     }
+    }
 shesh flang
