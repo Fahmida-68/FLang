@@ -17,20 +17,16 @@
         .bhailang-box { background-color: #161b22; border: 1px solid #30363d; border-radius: 6px; }
         .inline-code { background-color: #21262d; padding: 2px 6px; border-radius: 4px; font-family: 'Fira Code', monospace; color: #ff7b72; font-size: 0.9em; }
         
-        /* Strict CSS rule to completely block and hide PyScript's built-in error/alert windows */
+        /* Rigidly blocks and removes PyScript's native error window popups */
         py-script-css-theme-error, 
         .pyscript-alert, 
         py-aside,
-        div[style*="background-color"], 
-        div[class*="error"] { 
+        div[style*="background-color: rgb(255, 204, 204)"] { 
             display: none !important; 
             visibility: hidden !important; 
             opacity: 0 !important; 
             height: 0 !important; 
-            width: 0 !important;
             overflow: hidden !important;
-            position: absolute !important;
-            pointer-events: none !important;
         }
     </style>
 </head>
@@ -135,15 +131,16 @@ shesh flang</pre>
 
     <script type="py" config='{"files": ["tokens.py", "lexer.py", "parser.py", "interpreter.py", "main.py"]}'>
 from pyscript import document
-from main import run_code
 import sys
 
 def execute_playground(event):
     try:
+        # Import run_code dynamic at runtime to avoid caching issues
+        from main import run_code
+        
         input_text = document.querySelector("#code-input").value
         output_element = document.querySelector("#output-box")
         
-        # Run compiler logic pipeline securely
         result = run_code(input_text)
         
         if "[Compiler Error]" in str(result):
@@ -154,7 +151,7 @@ def execute_playground(event):
         output_element.innerText = str(result)
     except Exception as e:
         document.querySelector("#output-box").style.color = "#ff6b6b"
-        document.querySelector("#output-box").innerText = f"[System Error]: {str(e)}"
+        document.querySelector("#output-box").innerText = f"[Runtime Framework Error]: {str(e)}"
 
 def clear_playground(event):
     document.querySelector("#output-box").innerText = ""
