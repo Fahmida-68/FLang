@@ -62,7 +62,7 @@ class Lexer:
         while self.current_char is not None and self.current_char != quote_char:
             string_str += self.current_char
             self.advance()
-        self.advance() # Skip trailing quote
+        self.advance()
         return Token(TOKEN_STRING, string_str)
 
     def make_identifier(self):

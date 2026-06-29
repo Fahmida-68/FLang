@@ -4,13 +4,19 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>FLang - A Custom Toy Programming Language</title>
+    
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Permanent+Marker&family=Inter:wght@400;600;900&family=Fira+Code:wght@500&display=swap" rel="stylesheet">
+
     <link rel="stylesheet" href="https://pyscript.net/releases/2024.1.1/core.css" />
     <script type="module" src="https://pyscript.net/releases/2024.1.1/core.js"></script>
-    
+
     <style>
+        html { scroll-behavior: smooth; }
         body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background-color: #0d1117;
+            font-family: 'Inter', sans-serif;
+            background-color: #0f111a;
             color: #f0f6fc;
             margin: 0;
             padding: 0;
@@ -19,229 +25,134 @@
             align-items: center;
             min-height: 100vh;
         }
-        /* Hero Section matching Custom FLang Theme */
-        .hero {
-            text-align: center;
-            margin-top: 60px;
-            margin-bottom: 40px;
-        }
+        .hero { text-align: center; margin-top: 100px; margin-bottom: 80px; }
         .hero h1 {
-            font-size: 75px;
-            font-weight: 900;
-            color: #38bdf8;
+            font-family: 'Permanent Marker', cursive;
+            font-size: 110px;
+            color: #ff4a22;
             margin: 0;
-            letter-spacing: 2px;
+            letter-spacing: 4px;
             text-transform: uppercase;
+            text-shadow: 0px 4px 20px rgba(255, 74, 34, 0.2);
         }
-        .hero p {
-            font-size: 20px;
-            color: #8b949e;
-            margin-top: 15px;
-            margin-bottom: 0;
+        .hero p.tagline { font-size: 22px; color: #bdc5d4; margin-top: 25px; }
+        .credits { font-size: 15px; color: #656d8a; margin-top: 20px; }
+        .credits a { color: #ff4a22; text-decoration: none; font-weight: 600; }
+        
+        .main-nav-btns { margin-top: 35px; display: flex; justify-content: center; gap: 20px; }
+        .btn-primary {
+            background-color: #ff4a22; color: white; padding: 14px 32px;
+            font-size: 16px; font-weight: bold; border: none; border-radius: 6px;
+            cursor: pointer; transition: 0.2s; box-shadow: 0 4px 15px rgba(255, 74, 34, 0.3);
         }
-        /* Playground Styling */
+        .btn-primary:hover { background-color: #e03d19; }
+        .btn-secondary {
+            background-color: #21262d; color: #c9d1d9; padding: 14px 32px;
+            font-size: 16px; font-weight: bold; border: 1px solid #30363d; border-radius: 6px;
+            cursor: pointer; transition: 0.2s;
+        }
+        .btn-secondary:hover { background-color: #30363d; }
+
         .playground-container {
-            width: 90%;
-            max-width: 900px;
-            background: #161b22;
-            border: 1px solid #30363d;
-            border-radius: 6px;
-            overflow: hidden;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
-            margin-bottom: 5px;
+            width: 90%; max-width: 1000px; background: #171923;
+            border: 1px solid #232738; border-radius: 12px; overflow: hidden;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.6); margin-top: 40px;
         }
         .playground-header {
-            background-color: #21262d;
-            padding: 12px 20px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            border-bottom: 1px solid #30363d;
+            background-color: #1f2233; padding: 16px 25px;
+            display: flex; justify-content: space-between; align-items: center;
+            border-bottom: 1px solid #232738;
         }
-        .playground-title {
-            font-size: 24px;
-            font-weight: bold;
-            color: #f0f6fc;
+        .playground-title { font-size: 16px; font-weight: 600; color: #a0aec0; text-transform: uppercase; }
+        .action-btns button {
+            padding: 10px 24px; font-size: 15px; font-weight: bold;
+            border-radius: 6px; cursor: pointer; transition: 0.2s; border: none; margin-left: 10px;
         }
-        .btn-group button {
-            padding: 8px 24px;
-            font-size: 16px;
-            font-weight: bold;
-            border-radius: 6px;
-            cursor: pointer;
-            transition: 0.2s;
-            margin-left: 10px;
-            border: none;
-        }
-        #run-btn {
-            background-color: #38bdf8;
-            color: #0d1117;
-        }
-        #run-btn:hover { background-color: #0ea5e9; }
-        #clear-btn {
-            background-color: #f0f6fc;
-            color: #0d1117;
-        }
-        #clear-btn:hover { background-color: #dbe2e9; }
+        #run-btn { background-color: #ff4a22; color: white; }
+        #clear-btn { background-color: #2d3142; color: #a0aec0; }
         
         textarea {
-            width: 100%;
-            height: 280px;
-            background-color: #0d1117;
-            color: #4ade80;
-            font-family: 'Fira Code', 'Courier New', Courier, monospace;
-            font-size: 17px;
-            line-height: 1.5;
-            padding: 20px;
-            border: none;
-            box-sizing: border-box;
-            resize: none;
-            outline: none;
+            width: 100%; height: 380px; background-color: #0f111a; color: #f0f6fc;
+            font-family: 'Fira Code', monospace; font-size: 17px; line-height: 1.6;
+            padding: 25px; border: none; box-sizing: border-box; resize: none; outline: none;
         }
-        /* Console Window Box */
         .console-container {
-            width: 90%;
-            max-width: 900px;
-            background: #0d1117;
-            border: 1px solid #30363d;
-            border-radius: 6px;
-            margin-top: 20px;
-            margin-bottom: 50px;
-            box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+            width: 90%; max-width: 1000px; background: #0f111a;
+            border: 1px solid #232738; border-radius: 12px; margin-top: 30px; margin-bottom: 100px;
         }
-        .console-container-header {
-            background-color: #161b22;
-            padding: 8px 15px;
-            font-size: 12px;
-            color: #8b949e;
-            text-transform: uppercase;
-            letter-spacing: 1px;
-            border-bottom: 1px solid #30363d;
-        }
-        .output-box {
-            padding: 15px 20px;
-            min-height: 60px;
-            font-family: 'Fira Code', monospace;
-            font-size: 15px;
-            color: #58a6ff;
-            white-space: pre-wrap;
-        }
+        .console-header { background-color: #171923; padding: 12px 25px; font-size: 13px; color: #718096; font-weight: bold; border-bottom: 1px solid #232738; }
+        .output-box { padding: 20px 25px; min-height: 80px; font-family: 'Fira Code', monospace; font-size: 16px; color: #ff4a22; white-space: pre-wrap; background-color: #0b0c13; }
     </style>
 </head>
 <body>
 
     <div class="hero">
         <h1>FLANG</h1>
-        <p>A procedural toy programming language written in Python</p>
+        <p class="tagline">A toy programming language written in Python</p>
+        <div class="main-nav-btns">
+            <a href="#editor-section"><button class="btn-primary">Playground</button></a>
+            <a href="https://github.com/Fahmida-68/FLang" target="_blank"><button class="btn-secondary">View Source</button></a>
+        </div>
+        <p class="credits">Made by <a href="mailto:antanafahmida2013@gmail.com">antanafahmida2013@gmail.com</a></p>
     </div>
 
-    <div class="playground-container">
+    <div id="editor-section" class="playground-container">
         <div class="playground-header">
-            <div class="playground-title">Playground</div>
-            <div class="btn-group">
-                <button id="run-btn" py-click="run_compiler">Run</button>
-                <button id="clear-btn" py-click="clear_editor">Clear</button>
+            <div class="playground-title">playground</div>
+            <div class="action-btns">
+                <button id="run-btn" py-click="execute_from_ui">Run</button>
+                <button id="clear-btn" onclick="clearEditor()">Clear</button>
             </div>
         </div>
-        <textarea id="code-input">start flang
-    bol 10 + 20 * 2 - 5
-end flang</textarea>
+        <textarea id="code-input">shuru flang
+    bol "Hello World"
+    
+    rakho a = 3
+    rakho b = 0
+
+    jotokkhon (b < 5) {
+        bol b
+
+        jodi (b == a) {
+            bol "b is equal to a"
+        } natho (b == 0) {
+            bol "b is equal to zero"
+        }
+
+        b = b + 1
+    }
+shesh flang</textarea>
     </div>
 
     <div class="console-container">
-        <div class="console-header-title" style="background-color: #161b22; padding: 8px 15px; font-size: 12px; color: #8b949e; text-transform: uppercase; border-bottom: 1px solid #30363d;">Console Output</div>
-        <div id="output" class="output-box">Output ready...</div>
+        <div class="console-header">Output Log Window</div>
+        <div id="output" class="output-box">Output log sequence idle...</div>
     </div>
 
-    <script type="py">
+    <script>
+        function clearEditor() {
+            document.getElementById("code-input").value = "";
+            document.getElementById("output").innerText = "";
+        }
+    </script>
+
+    <py-config>
+        [[fetch]]
+        files = ["tokens.py", "lexer.py", "parser.py", "interpreter.py", "main.py"]
+    </py-config>
+
+    <py-script>
+        from main import run_code
         from pyscript import document
 
-        # Core Lexer Token Constants 
-        TOKEN_INT, TOKEN_PLUS, TOKEN_MINUS, TOKEN_MUL, TOKEN_DIV, TOKEN_PRINT, TOKEN_EOF = 'INT', 'PLUS', 'MINUS', 'MUL', 'DIV', 'PRINT', 'EOF'
-
-        class Token:
-            def __init__(self, type_, value=None):
-                self.type = type_
-                self.value = value
-            def __repr__(self):
-                return f'{self.type}:{self.value}' if self.value is not None else f'{self.type}'
-
-        def custom_lexer(text):
-            tokens = []
-            pos = 0
-            while pos < len(text):
-                char = text[pos]
-                if char in ' \t\n\r':
-                    pos += 1
-                    continue
-                # Professional keyword checking wrapper mappings 
-                if text[pos:pos+3] == "bol" and (pos+3 >= len(text) or text[pos+3] in ' \t\n\r'):
-                    tokens.append(Token(TOKEN_PRINT))
-                    pos += 3
-                    continue
-                if char == '+': tokens.append(Token(TOKEN_PLUS)); pos += 1
-                elif char == '-': tokens.append(Token(TOKEN_MINUS)); pos += 1
-                elif char == '*': tokens.append(Token(TOKEN_MUL)); pos += 1
-                elif char == '/': tokens.append(Token(TOKEN_DIV)); pos += 1
-                elif char.isdigit():
-                    num = ''
-                    while pos < len(text) and text[pos].isdigit():
-                        num += text[pos]
-                        pos += 1
-                    tokens.append(Token(TOKEN_INT, int(num)))
-                else:
-                    pos += 1
-            tokens.append(Token(TOKEN_EOF))
-            return tokens
-
-        def evaluate_code(text):
-            clean_text = text.strip()
+        def execute_from_ui(event):
+            code_input = document.querySelector("#code-input").value
+            output_box = document.querySelector("#output")
             
-            # Syntax validation checks against FLang Wrappers 
-            if not clean_text.startswith("start flang"):
-                return "[Parser Error]: Program must start with 'start flang' boundary entry keyword."
-            if not clean_text.endswith("end flang"):
-                return "[Parser Error]: Program execution requires 'end flang' closure statement."
-            
-            # Splitting payload string dynamically inside wrappers 
-            core_program = clean_text[11:-9].strip()
-            
-            tokens = custom_lexer(core_program)
-            if not tokens or tokens[0].type != TOKEN_PRINT:
-                return "[Parser Error]: Program parsing initialization expects declaration commands."
-            
-            idx = 1
-            if idx < len(tokens) and tokens[idx].type == TOKEN_INT:
-                result = tokens[idx].value
-                idx += 1
-                while idx < len(tokens):
-                    op = tokens[idx]
-                    if op.type in [TOKEN_PLUS, TOKEN_MINUS, TOKEN_MUL, TOKEN_DIV]:
-                        idx += 1
-                        if idx < len(tokens) and tokens[idx].type == TOKEN_INT:
-                            next_val = tokens[idx].value
-                            if op.type == TOKEN_PLUS: result += next_val
-                            elif op.type == TOKEN_MINUS: result -= next_val
-                            elif op.type == TOKEN_MUL: result *= next_val
-                            elif op.type == TOKEN_DIV:
-                                if next_val == 0: return "[Runtime Error]: Division by zero tracking error!"
-                                result //= next_val
-                        idx += 1
-                    else:
-                        break
-                return f"Success! Output Value: {result}"
-            return "[Compiler Error]: Malformed logical execution trace block layout."
-
-        # Control UI Event Listeners 
-        def run_compiler(event):
-            input_text = document.getElementById("code-input").value
-            console_output = evaluate_code(input_text)
-            document.getElementById("output").innerText = console_output
-
-        def clear_editor(event):
-            document.getElementById("code-input").value = ""
-            document.getElementById("output").innerText = ""
-    </script>
+            # Fire standard compiler execution flow pipeline
+            result = run_code(code_input)
+            output_box.innerText = result
+    </py-script>
 
 </body>
 </html>

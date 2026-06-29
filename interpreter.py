@@ -33,7 +33,7 @@ class Interpreter:
         elif isinstance(node, VarAccessNode):
             if node.var_name in self.global_memory:
                 return self.global_memory[node.var_name]
-            raise Exception(f"Runtime Error: Variable '{node.var_name}' data reference missing.")
+            raise Exception(f"Runtime Error: Variable '{node.var_name}' not defined.")
         elif isinstance(node, BinOpNode):
             left_val = self.evaluate(node.left)
             right_val = self.evaluate(node.right)

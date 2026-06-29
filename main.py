@@ -20,7 +20,6 @@ def run_code(source_code):
         return f"[Compiler Error]: {str(e)}"
 
 if __name__ == '__main__':
-    # Standard runtime sequence reading standalone .fl files locally via console terminal
     if len(sys.argv) > 1:
         filename = sys.argv[1]
         with open(filename, 'r') as file:
