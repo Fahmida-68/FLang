@@ -129,17 +129,19 @@ shesh flang</pre>
         </div>
     </div>
 
-    <script type="py" config='{"files": [{"from": "tokens.py?v=3", "to": "tokens.py"}, {"from": "lexer.py?v=3", "to": "lexer.py"}, {"from": "parser.py?v=3", "to": "parser.py"}, {"from": "interpreter.py?v=3", "to": "interpreter.py"}, {"from": "main.py?v=3", "to": "main.py"}]}'></script>
+    <script type="py" config='{"files": ["tokens.py", "lexer.py", "parser.py", "interpreter.py", "main.py"]}'>
 from pyscript import document
 
 def execute_playground(event):
     try:
-        from main import run_code
+        import main
+        import importlib
+        importlib.reload(main)
         
         input_text = document.querySelector("#code-input").value
         output_element = document.querySelector("#output-box")
         
-        result = run_code(input_text)
+        result = main.run_code(input_text)
         
         if "[Compiler Error]" in str(result):
             output_element.style.color = "#ff6b6b"
