@@ -17,7 +17,7 @@
         .bhailang-box { background-color: #161b22; border: 1px solid #30363d; border-radius: 6px; }
         .inline-code { background-color: #21262d; padding: 2px 6px; border-radius: 4px; font-family: 'Fira Code', monospace; color: #ff7b72; font-size: 0.9em; }
         
-        /* Rigidly blocks and removes PyScript's native error window popups */
+        /* Blocks and removes PyScript's native error window popups */
         py-script-css-theme-error, 
         .pyscript-alert, 
         py-aside,
@@ -106,42 +106,24 @@ This too</pre>
     b = 21
 shesh flang</pre>
             </div>
-
-            <div>
-                <h3 class="text-xl font-bold text-white mb-2 border-b border-gray-800 pb-2">Types</h3>
-                <p class="text-sm text-gray-400 mb-4">Numbers and strings are fully integrated. Conditional expressions resolve standard comparisons directly inside control definitions.</p>
-                <pre class="bhailang-box p-4 text-xs text-green-400 code-font">shuru flang
-    rakho a = 10
-    rakho b = 10 + (15 * 20)
-    rakho c = "FLang Engine"
-shesh flang</pre>
-            </div>
-
-            <div>
-                <h3 class="text-xl font-bold text-white mb-2 border-b border-gray-800 pb-2">Built-ins</h3>
-                <p class="text-sm text-gray-400 mb-4">Use the default command standard keyword <span class="inline-code">bol</span> to print output values or statements directly onto the terminal logs.</p>
-                <pre class="bhailang-box p-4 text-xs text-yellow-400 code-font">shuru flang
-    bol "Hello World"
-    rakho a = 10
-    bol a
-shesh flang</pre>
-            </div>
         </div>
     </div>
 
-    <script type="py" config='{"files": ["tokens.py", "lexer.py", "parser.py", "interpreter.py", "main.py?v=2"]}'>
+    <script type="py" config='{"files": ["tokens.py", "lexer.py", "parser.py", "interpreter.py", "main.py"]}'>
 from pyscript import document
 import sys
 
 def execute_playground(event):
     try:
-        # Import run_code dynamic at runtime to avoid caching issues
-        from main import run_code
+        import main
+        # Force refresh the module lookups internally
+        import importlib
+        importlib.reload(main)
         
         input_text = document.querySelector("#code-input").value
         output_element = document.querySelector("#output-box")
         
-        result = run_code(input_text)
+        result = main.run_code(input_text)
         
         if "[Compiler Error]" in str(result):
             output_element.style.color = "#ff6b6b"
